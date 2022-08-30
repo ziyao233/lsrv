@@ -2,7 +2,7 @@
 # File:/src/makefile
 # Date:2022.08.30
 # By MIT License.
-# Copyright(C) 2022 Ziyao.All rights reserved.
+# Copyright(C) 2022 Ziyao.
 
 # Tools
 CC:=cc
@@ -18,7 +18,7 @@ CFLAGS:=-O0 -g -pedantic -Wextra -Wall -Werror
 LDFLAGS:=-l lua -l m -g
 
 # Outputs
-OBJS:=lsrv.o
+OBJS:=lsrv.o Watcher.o
 APP:=lsrv
 
 
