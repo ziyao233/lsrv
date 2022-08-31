@@ -46,6 +46,8 @@ static int read_conf(const char *path)
 	lua_pushboolean(s,1);
 	lua_setglobal(s,"LSRV_CONF");
 
+	int ret = -1;
+
 	if (luaL_dofile(s,path)) {
 		fprintf(stderr,"Error: Parsing Configuration\n%s",
 			lua_tostring(s,-1));
@@ -64,7 +66,7 @@ static int read_conf(const char *path)
 			lua_pushinteger(s,1);
 		} else if (type != LUA_TNUMBER) {
 			fprintf(stderr,"Error: Configuration term %s requires "
-					"a number",integerTerm[i].name);
+					"a number\n",integerTerm[i].name);
 			goto end;
 		}
 		*integerTerm[i].pointer = lua_tointeger(s,-1);
@@ -78,22 +80,23 @@ static int read_conf(const char *path)
 			lua_pushlstring(s,"",0);
 		} else if (type != LUA_TSTRING) {
 			fprintf(stderr,"Error: Configuration term %s requires "
-					"a string",stringTerm[i].name);
+					"a string\n",stringTerm[i].name);
 			goto end;
 		}
 		*stringTerm[i].pointer = strdup(lua_tostring(s,-1));
 		lua_pop(s,1);
 	}
+	ret = 0;
 
 end:
 	lua_close(s);
 
-	return 0;
+	return ret;
 }
 
 static void usage(const char *name)
 {
-	fprintf(stderr,"Usage:\n%s <CONFIGURATION>\n",name);
+	fprintf(stderr,"Usage:\n\t%s <CONFIGURATION>\n",name);
 	return;
 }
 
@@ -111,6 +114,9 @@ int main(int argc,const char *argv[])
 	printf("port: %d\n",gLsrvConf.port);
 	printf("workPath: %s\n",gLsrvConf.workPath);
 	printf("workerNum: %d\n",gLsrvConf.workerNum);
+
+	lsrv_worker_start();
+	lsrv_worker_master();
 
 	return 0;
 }

@@ -13,4 +13,7 @@
 
 extern struct Lsrv_Conf gLsrvConf;
 
+#include"Watcher.h"
+#include"Worker.h"
+
 #endif	// __LSRV_H_INC__

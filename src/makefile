@@ -14,11 +14,11 @@ INSTALL:=install
 DIR_INSTALL:=/usr/local/bin
 
 # Flags
-CFLAGS:=-O0 -g -pedantic -Wextra -Wall -Werror
-LDFLAGS:=-l lua -l m -g
+CFLAGS:=-O0 -g -pedantic -Wextra -Wall -Werror -pthread
+LDFLAGS:=-l lua -l m -g -pthread
 
 # Outputs
-OBJS:=lsrv.o Watcher.o
+OBJS:=lsrv.o Watcher.o Worker.o
 APP:=lsrv
 
 
