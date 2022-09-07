@@ -9,8 +9,17 @@
 if LSRV_CONF
 then
 	return {
-			workerNum = 2,
-			port	  = 11451,
-			workPath  = "/srv"
+			workerNum	= 1,
+			listenPort	= 11451,
+			workPath	= "/srv",
+			listenIp	= "0.0.0.0",
+			maxConnection	= 8,
+			backlog		= 8,
+			mainFile	= "Test.lua",
 	       };
+end
+
+return function()
+	lsrv.write("Atom is cute!");
+	return;
 end

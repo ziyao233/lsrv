@@ -1,7 +1,7 @@
 /*
  *	lsrv
  *	File:/src/lsrv.c
- *	Date:2022.08.30
+ *	Date:2022.09.07
  *	By MIT License
  *	Copyright (c) 2022 Ziyao.
  */
@@ -27,7 +27,10 @@ static int read_conf(const char *path)
 				const char *name;
 		     } integerTerm[] = {
 					TERM(workerNum),
-					TERM(port),
+					TERM(listenPort),
+					TERM(listenPort),
+					TERM(backlog),
+					TERM(maxConnection),
 					{NULL,NULL},
 				     };
 	static const struct {
@@ -35,6 +38,8 @@ static int read_conf(const char *path)
 				const char *name;
 		     } stringTerm[] = {
 					TERM(workPath),
+					TERM(mainFile),
+					TERM(listenIp),
 					{NULL,NULL},
 				    };
 #undef TERM
@@ -111,7 +116,7 @@ int main(int argc,const char *argv[])
 		return -1;
 	}
 
-	printf("port: %d\n",gLsrvConf.port);
+	printf("port: %d\n",gLsrvConf.listenPort);
 	printf("workPath: %s\n",gLsrvConf.workPath);
 	printf("workerNum: %d\n",gLsrvConf.workerNum);
 

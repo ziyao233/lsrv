@@ -1,6 +1,6 @@
 /*
  *	lsrv
- *	Date:2022.08.30
+ *	Date:2022.09.06
  *	File:/src/Watcher.c
  *	By MIT License.
  *	Copyright (c) 2022 Ziyao.
@@ -82,7 +82,8 @@ int lsrv_watcher_wait(Lsrv_Watcher *w,int *readyList,int *errorList,
 	}
 
 	int readyNum = select(w->maxFd + 1,&rSet,&wSet,&errSet,timeoutPointer);
-	*timeout = timeval.tv_sec * 1000 + timeval.tv_usec;
+	if (timeout)
+		*timeout = timeval.tv_sec * 1000 + timeval.tv_usec;
 	if (readyNum <= 0) {
 		return 0;
 	}

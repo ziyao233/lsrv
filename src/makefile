@@ -1,6 +1,6 @@
 # lsrv
 # File:/src/makefile
-# Date:2022.08.30
+# Date:2022.09.07
 # By MIT License.
 # Copyright(C) 2022 Ziyao.
 
@@ -18,7 +18,7 @@ CFLAGS:=-O0 -g -pedantic -Wextra -Wall -Werror -pthread
 LDFLAGS:=-l lua -l m -g -pthread
 
 # Outputs
-OBJS:=lsrv.o Watcher.o Worker.o
+OBJS:=lsrv.o Watcher.o Worker.o Module.o
 APP:=lsrv
 
 
