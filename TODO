@@ -1,0 +1,7 @@
+打扫 Worker 里的 dirty code
+Log C API & Lua API
+连接写入 API
+Keepalive 支持
+定时器
+IPv6,UNIX Socket 支持
+完整 Lua 标准运行环境

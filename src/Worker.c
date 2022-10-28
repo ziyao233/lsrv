@@ -1,7 +1,7 @@
 /*
  *	lsrv
  *	File:/src/Worker.c
- *	Date:2022.09.07
+ *	Date:2022.10.28
  *	By MIT License.
  *	Copyright (c) 2022 Ziyao.
  */
@@ -179,29 +179,75 @@ static void *worker_body(void *arg)
 	return NULL;
 }
 
+#define error(msg,...) fprintf(stderr,"Error: " msg,__VA_ARGS__)
+
+#define SOCKETTYPE_IPV4_TCP	1
+#define SOCKETTYPE_IPV6_TCP	2
+#define SOCKETTYPE_IPV4_UDP	3
+#define SOCKETTYPE_IPV6_UDP	4
+#define SOCKETTYPE_UNIX		5
+
+static int open_socket()
+{
+	int sock;
+	if (gLsrvConf.socketType == SOCKETTYPE_IPV4_TCP) {
+		sock = socket(AF_INET,SOCK_STREAM,0);
+		if (sock < 0)
+			return -1;
+
+		struct sockaddr_in addr;
+		addr.sin_family		= AF_INET;
+		addr.sin_port		= htons(gLsrvConf.listenPort);
+		if (inet_pton(AF_INET,gLsrvConf.listenIp,
+			      &addr.sin_addr.s_addr) <= 0) {
+			error("Cannot convert %s into IPv4 address\n",
+			      gLsrvConf.listenIp);
+			return -1;
+		}
+
+		if (bind(sock,(struct sockaddr*)(&addr),
+			 sizeof(struct sockaddr)) < 0) {
+			error("Cannot bind socket to %s:%d\n",
+			      gLsrvConf.listenIp,gLsrvConf.listenPort);
+			return -1;
+		}
+	} else if (gLsrvConf.socketType == SOCKETTYPE_IPV6_TCP) {
+		sock = socket(AF_INET6,SOCK_STREAM,0);
+		if (sock < 0)
+			return -1;
+
+		struct sockaddr_in6 addr;
+		addr.sin6_family	= AF_INET6;
+		addr.sin6_port		= htons(gLsrvConf.listenPort);
+		if (inet_pton(AF_INET6,gLsrvConf.listenIp,
+			      &addr.sin6_addr.s6_addr) <= 0) {
+			error("Cannot convert %s into IPv6 address\n",
+			      gLsrvConf.listenIp);
+		}
+
+		if (bind(sock,(struct sockaddr*)(&addr),
+			 sizeof(struct sockaddr_storage)) < 0) {
+			error("Cannot bind socket to %s:%d\n",
+			      gLsrvConf.listenIp,gLsrvConf.listenPort);
+			return -1;
+		}
+	} else {
+		error("Unsupported socket type %d\n",gLsrvConf.socketType);
+		return -1;
+	}
+
+	if (listen(sock,gLsrvConf.backlog) < 0) {
+		error("Cannot listen to the socket %d\n",sock);
+		return -1;
+	}
+
+	return sock;
+}
+
 int lsrv_worker_start()
 {
-	// TODO: Assuming IPv4 TCP only
-	int sock = socket(AF_INET,SOCK_STREAM,0);
+	int sock = open_socket();
 	if (sock < 0)
-		return -1;
-
-	struct sockaddr_in addr;
-	addr.sin_family		= AF_INET;
-	addr.sin_port		= htons(gLsrvConf.listenPort);
-	if (inet_pton(AF_INET,gLsrvConf.listenIp,&addr.sin_addr.s_addr) <= 0) {
-		fprintf(stderr,"Error: Cannot convert %s into IP address\n",
-			gLsrvConf.listenIp);
-		return -1;
-	}
-
-	if (bind(sock,(struct sockaddr*)(&addr),sizeof(struct sockaddr)) < 0) {
-		fprintf(stderr,"Error: Cannot bind socket to %s:%d\n",
-			gLsrvConf.listenIp,gLsrvConf.listenPort);
-		return -1;
-	}
-
-	if (listen(sock,gLsrvConf.backlog) < 0)
 		return -1;
 
 	gWorkers = malloc(sizeof(*gWorkers) * gLsrvConf.workerNum);

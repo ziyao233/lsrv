@@ -1,7 +1,7 @@
 /*
  *	lsrv
  *	File:/src/lsrv.c
- *	Date:2022.09.07
+ *	Date:2022.10.28
  *	By MIT License
  *	Copyright (c) 2022 Ziyao.
  */
@@ -31,6 +31,7 @@ static int read_conf(const char *path)
 					TERM(listenPort),
 					TERM(backlog),
 					TERM(maxConnection),
+					TERM(socketType),
 					{NULL,NULL},
 				     };
 	static const struct {
