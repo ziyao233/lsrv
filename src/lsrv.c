@@ -121,7 +121,11 @@ int main(int argc,const char *argv[])
 	printf("workPath: %s\n",gLsrvConf.workPath);
 	printf("workerNum: %d\n",gLsrvConf.workerNum);
 
-	lsrv_worker_start();
+	if (lsrv_worker_start()) {
+		fputs("Cannot start workers\n",stderr);
+		return -1;
+	}
+
 	lsrv_worker_master();
 
 	return 0;
